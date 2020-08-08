@@ -63,12 +63,35 @@ function mostrarAutores($detalle, $mysqli)
 }
 
 
-if (isset($_GET) && isset($_GET['peticion'])) {
+
+function crearLibro($autor, $titulo, $mysqli)
+{
+    $sql = "INSERT INTO test (autor, titulo) VALUES ('$autor', '$titulo');";
+    $resultado = $mysqli->query($sql);
+    return $mysqli->insert_id;
+}
+
+function borrarLibro($titulo, $mysqli)
+{
+    $sql = "DELETE FROM test WHERE titulo='$titulo';";
+    $resultado = $mysqli->query($sql);
+    return $mysqli->affected_rows;
+}
+
+if (isset($_GET['peticion'])) {
 
     if ($_GET['peticion'] == 'libros') {
         $resultados =  mostrarLibros($_GET['detalle'], $mysqli);
-    } else if ($_GET['peticion'] == 'autores') {
+
+    } else if ($_GET['peticion'] == 'libro' AND $_GET['detalle'] == 'nuevo') {
+        $resultados = crearLibro($_POST['titulo'], $_POST['autor'], $mysqli);
+
+    } else if ($_GET['peticion'] == 'libro' AND $_GET['detalle'] == 'borrar') {
+            $resultados = borrarLibro($_POST['titulo'], $mysqli);
+
+        } else if ($_GET['peticion'] == 'autores') {
         $resultados =  mostrarAutores($_GET['detalle'], $mysqli);
+
     } else {
         header('HTTP/1.1 405 Method Not Allowed');
         
@@ -80,10 +103,15 @@ if (isset($_GET) && isset($_GET['peticion'])) {
 } else{
     echo "<h1>Rest service</h1>";
     echo "<h2>Biblioteca</h2>";
-    echo "<h2>Comandos:</h2>";
+    echo "<h2>Comandos básicos:</h2>";
     echo "<lu>libros/lista</lu><br>";
     echo "<lu>libros/id</lu><br>";
     echo "<lu>autores/lista</lu><br>";
     echo "<lu>autores/id</lu><br>";
+        echo "<h2>Comandos avanzados con Tabla:</h2>";
+        echo "<lu>libros/nuevo</lu><br>";
+        echo "<lu>libros/borrar</lu><br>";
+
+
 
 }
